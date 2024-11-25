@@ -34,7 +34,7 @@ impl Player {
             Some(ability) => {
                 match ability.as_str() {
                     "XPMultiplier" => 2, // x2 multiplier
-                    _ => 1, // Default multiplier for unrecognized abilities
+                    _ => 1, // Default multiplier
                 }
             },
             None => 1,
@@ -45,6 +45,18 @@ impl Player {
             self.name, points * multiplier, multiplier, self.exp
         );
     }
+
+    fn _gain_exp_wacko(&mut self, points: u32) {
+        if let Some(ability) = self.power_up.as_deref() {
+            match ability {
+                "XPMultiplier" => self.exp += points * 2, // x2 multiplier
+                _ => self.exp += points, // Unrecognized ability
+            }
+        } else {
+            self.exp += points
+        };
+    }
+
 
     fn save_player_data(self) {
         println!("[Save Data] {}'s data has been saved. Current stats:", self.name);
