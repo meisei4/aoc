@@ -108,8 +108,8 @@ fn main() {
 
     let mut player4 = Player::new("player_four", 3, 300);
     // Power up is not set so panic occurs
-    // let ability_panic = player5.power_up.clone().expect("Player_five should have a power-up ability");
-    // println!("{} has acquired the ability using expect: {}", player5.name, ability_panic);
+    //let ability_panic = player4.power_up.clone().expect("Player_five should have a power-up ability");
+    //println!("{} has acquired the ability using expect: {}", player4.name, ability_panic);
 
     player4.gain_exp(50); // Should use default multiplier
 
