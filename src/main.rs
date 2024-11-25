@@ -3,6 +3,7 @@ struct Player {
     name: String,
     lvl: u32,
     exp: u32,
+    power_up: Option<String>,
 }
 
 impl Player {
@@ -11,6 +12,7 @@ impl Player {
             name: _name.to_string(),
             lvl: _level,
             exp: _experience,
+            power_up: None,
         }
     }
 
@@ -28,7 +30,20 @@ impl Player {
     }
 
     fn gain_exp(&mut self, points: u32) {
-        self.exp += points;
+        let multiplier = match &self.power_up {
+            Some(ability) => {
+                match ability.as_str() {
+                    "XPMultiplier" => 2, // x2 multiplier
+                    _ => 1, // Default multiplier for unrecognized abilities
+                }
+            },
+            None => 1,
+        };
+        self.exp += points * multiplier;
+        println!(
+            "{} gains {} experience points (multiplier: {}). Total XP: {}",
+            self.name, points * multiplier, multiplier, self.exp
+        );
     }
 
     fn save_player_data(self) {
@@ -41,6 +56,10 @@ impl Player {
         self.level_up();
         // MOVE ERROR!
         //self.save_player_data();
+    }
+
+    fn set_power_up(&mut self, ability: String) {
+        self.power_up = Some(ability);
     }
 }
 
@@ -57,9 +76,8 @@ fn main() {
     let player_name = &player1.name; // Immutable borrow (active)
     //player1.gain_exp(200);           // Mutable borrow (conflict)
     player1.show_stats();            // only a & reference (no-conflict)
-     // CANNOT HAVE BOTH IMMUTABLE AND MUTABLE ACTIVE AT THE SAME TIME
+    // CANNOT HAVE BOTH IMMUTABLE AND MUTABLE ACTIVE AT THE SAME TIME
     println!("check out this immutable borrow of players's name: {}", player_name);
-
 
     save_game(player1);
     // FIX: uncomment the following lines and comment the above line
@@ -75,6 +93,28 @@ fn main() {
 
     let mut player3 = Player::new("player_three", 1, 0);
     player3.level_up_and_save();
+
+    let mut player4 = Player::new("player_four", 3, 300);
+    // Power up is not set so panic occurs
+    // let ability_panic = player5.power_up.clone().expect("Player_five should have a power-up ability");
+    // println!("{} has acquired the ability using expect: {}", player5.name, ability_panic);
+
+    player4.gain_exp(50); // Should use default multiplier
+
+    let mut player5 = Player::new("player_five", 2, 150);
+    player5.show_stats();
+    player5.set_power_up("XPMultiplier".to_string());
+
+    // Using unwrap (Avoids panic)
+    let ability_unwrapped = player5.power_up.clone().unwrap();
+    println!("{} has acquired the ability using unwrap: {}", player5.name, ability_unwrapped);
+
+    // Using expect (will panic with a custom message if power_up is None)
+    let ability_expected = player5.power_up.clone().expect("Player should have a power-up ability");
+    println!("{} has acquired the ability using expect: {}", player5.name, ability_expected);
+
+    player5.gain_exp(50); // Should apply multiplier based on "XPMultiplier"
+
 }
 
 fn save_game(player: Player) {
