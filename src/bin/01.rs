@@ -64,9 +64,41 @@ fn distance_between_lists(list1: &[u32], list2: &[u32]) -> u32 {
 }
 
 
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<u32> {
+    use std::collections::HashMap;
+
+    let regex: Regex = Regex::new(r"(\d+)\s{3}(\d+)").unwrap();
+    let mut list1: Vec<u32> = vec![];
+    let mut list2: Vec<u32> = vec![];
+
+    let mut input_lines = input.lines();
+
+    while let Some(line) = input_lines.next() {
+        if let Some(captures) = regex.captures(line) {
+            if let Some(left_side_capture_group) = captures.get(VERTICAL_LIST_LEFT_SIDE) {
+                list1.push(left_side_capture_group.as_str().parse::<u32>().ok()?);
+            }
+            if let Some(right_side_capture_group) = captures.get(VERTICAL_LIST_RIGHT_SIDE) {
+                list2.push(right_side_capture_group.as_str().parse::<u32>().ok()?);
+            }
+        }
+    }
+
+    // Count occurrences of each number in list2
+    let mut count_map: HashMap<u32, u32> = HashMap::new();
+    for &num in &list2 {
+        *count_map.entry(num).or_insert(0) += 1;
+    }
+
+    // Calculate the similarity score
+    let similarity_score = list1
+        .iter()
+        .map(|&num| num * count_map.get(&num).unwrap_or(&0))
+        .sum();
+
+    Some(similarity_score)
 }
+
 
 #[cfg(test)]
 mod tests {
