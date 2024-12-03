@@ -1,6 +1,6 @@
 extern crate core;
 
-use regex::{Regex};
+use regex::Regex;
 
 advent_of_code::solution!(1);
 
@@ -63,7 +63,6 @@ fn distance_between_lists(list1: &[u32], list2: &[u32]) -> u32 {
     0
 }
 
-
 pub fn part_two(input: &str) -> Option<u32> {
     use std::collections::HashMap;
 
@@ -98,7 +97,6 @@ pub fn part_two(input: &str) -> Option<u32> {
 
     Some(similarity_score)
 }
-
 
 #[cfg(test)]
 mod tests {
