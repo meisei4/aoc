@@ -83,7 +83,7 @@ fn is_line_safe_enough(line: &str) -> bool {
     // line is now considered not safe according to RULE1 and RULE2
     let mut safe: bool = false;
 
-    //NO LETS TEST RULE 3:
+    //NO LETS TEST RULE 3: for every i, is the line still not safe?
     let numbers: Vec<u32> = line
         .split_whitespace()
         .filter_map(|num| num.parse::<u32>().ok())
@@ -101,13 +101,13 @@ fn without_i(line: &str, _idx: usize) -> String {
     let line_without_i = line
         .split_whitespace()
         .enumerate()
-        .filter_map(|(idx, val)| {
+        .filter_map(|(idx, val)| { // enumerations give you access to the index and the value for iteration!!
             if idx != _idx {
                 Some(val)
             } else {
                 None
             }
-        }) // remove all strings that match i
+        })
         .collect::<Vec<&str>>()
         .join(" ");
 
